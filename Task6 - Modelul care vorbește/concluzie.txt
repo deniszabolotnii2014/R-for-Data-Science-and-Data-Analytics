@@ -1,0 +1,9 @@
+CONCLUZIE – TASK 6: MODELUL CARE VORBEȘTE
+
+Pentru cele 80 de observații disponibile, am folosit o regresie liniară multiplă pentru a estima numărul de cărți citite pe baza vârstei membrului și a vechimii ca membru. Modelul obținut explică 85,3% din variația numărului de cărți citite (R² = 0.853); ambii predictori sunt semnificativi statistic (p < 0,001).
+
+Pentru compararea impactului celor doi predictori, coeficienții standardizați sunt aproximativ 0,673 pentru vârstă și 0,608 pentru vechimea ca membru. Astfel, în acest set de date, vârsta are o asociere standardizată ușor mai mare cu numărul de cărți citite. Acest rezultat descrie o asociere în date și nu demonstrează o relație de cauzalitate.
+
+Pe un set de test de 20% (seed = 42), modelul a obținut R² = 0.607, RMSE = 5.68 și MAE = 4.48, ceea ce arată că performanța pe date nevăzute este mai modestă decât pe întregul set. Prin urmare, modelul poate fi folosit ca instrument de estimare, dar predicțiile trebuie interpretate cu prudență.
+
+Pentru membrii ipotetici (18, 1), (25, 3), (40, 5) și (60, 7), numărul estimat de cărți este, respectiv, 14, 23, 35 și 50.

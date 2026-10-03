@@ -1,0 +1,25 @@
+EXECUTIVE SUMMARY – NETFLIX CASE
+
+1. Întrebarea analizată
+Am ales întrebarea: „Care factori prezic cel mai bine scorul IMDb al unui conținut – genul, durata, anul și țara de producție?”
+
+2. Abordarea
+Cele cinci tabele Netflix au fost importate în R și conectate prin id. Deoarece genres.csv și countries.csv pot avea mai multe rânduri pentru același titlu, acestea au fost agregate la nivel de titlu prin alegerea genului și țării care apar cel mai frecvent. Setul final este folosit pentru o regresie liniară multiplă.
+
+3. Modelul
+Variabila țintă este imdb_score. Predictorii sunt main_genre, runtime, release_year și main_country. Datele sunt împărțite în 80% training și 20% test, cu seed 42.
+
+4. Evaluarea
+Modelul trebuie evaluat pe setul de test prin MAE, RMSE și R². Valorile obținute pe datele furnizate trebuie citite din consola R după rularea scriptului. În analiza de verificare a datelor, modelul a avut aproximativ MAE = 0.842, RMSE = 1.111 și R² test = 0.115; aceste valori indică o capacitate explicativă limitată, deci predicțiile trebuie folosite ca estimări orientative.
+
+5. Interpretare
+Coeficienții din summary(model) arată direcția și magnitudinea relației dintre fiecare predictor și scorul IMDb, ținând ceilalți predictori constanți. Pentru variabilele categorice, coeficienții sunt interpretați față de categoria de referință aleasă de R.
+
+6. Predicția pe date noi
+Au fost create patru scenarii ipotetice pentru 2026, iar funcția predict() estimează scorul IMDb pentru fiecare. Rezultatele sunt prezentate și grafic în 04_new_predictions.png.
+
+7. Mesaj pentru management
+Analiza poate susține planificarea și compararea unor scenarii de conținut, dar modelul nu explică integral variația scorurilor IMDb. Prin urmare, rezultatele trebuie folosite împreună cu alte informații de business și nu ca o garanție a succesului unui titlu.
+
+8. Recomandare
+Pentru decizii de investiții, modelul poate fi folosit ca instrument de screening inițial: se compară scenarii similare și se verifică predicția împreună cu eroarea modelului. Pentru o versiune ulterioară, modelul poate fi îmbunătățit prin includerea mai multor genuri și țări pentru fiecare titlu, a numărului de voturi IMDb și a altor variabile relevante.

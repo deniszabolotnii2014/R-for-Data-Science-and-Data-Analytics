@@ -1,0 +1,32 @@
+user_id,genre,count
+1,NA,2
+2,Adventure,1
+2,Management,3
+5,NA,6
+6,Philosophy,5
+7,Philosophy,1
+7,NA,3
+8,Management,1
+8,Non-Fiction,2
+9,Non-Fiction,1
+9,NA,1
+10,Space Exploration,5
+12,Management,1
+12,Non-Fiction,3
+13,Fiction,1
+13,Science,1
+14,Non-Fiction,4
+14,NA,1
+16,Fiction,1
+16,Non-Fiction,1
+17,Science,5
+17,Management,2
+18,Space Exploration,1
+18,NA,1
+20,Management,2
+20,Science,5
+22,Philosophy,2
+28,Management,7
+29,Science,2
+30,Philosophical,1
+30,Non-Fiction,5

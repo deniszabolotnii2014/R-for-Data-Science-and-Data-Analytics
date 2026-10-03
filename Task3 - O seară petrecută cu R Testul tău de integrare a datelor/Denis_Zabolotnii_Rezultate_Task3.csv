@@ -1,0 +1,13 @@
+indicator,valoare
+Numar carti - CSV books_df,529
+Numar carti - MySQL books_db,510
+Diferenta numar carti CSV vs MySQL,19
+Cea mai veche data de imprumut din Excel,2021-02-17
+Cea mai recenta data de imprumut din Excel,2025-05-24
+Numar total inregistrari in rentals_df,300
+Numar carti distincte imprumutate - Excel,193
+Numar carti distincte imprumutate - MySQL,122
+Diferenta carti distincte imprumutate Excel vs MySQL,71
+Numar utilizatori distincti in Excel,300
+Utilizatori East Albert fara carte - Excel,4
+Utilizatori East Albert fara rental - MySQL,0

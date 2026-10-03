@@ -1,0 +1,296 @@
+# Analizăm vânzările pentru două produse online (A și B)
+# pe parcursul a 5 zile.
+#
+# Sunt utilizate doar structurile de bază din R:
+# vectori, liste și data.frame-uri.
+# Nu se folosesc fișiere externe, biblioteci sau vizualizări.
+# ============================================================
+
+
+# 1. ORGANIZAREA DATELOR
+# Cele 5 zile de vânzări.
+zile <- 1:5
+
+# PRODUSUL A
+# Prețurile zilnice.
+pret_A <- c(19.99, 24.50, 18.75, 22.00, 20.30)
+
+# Cantitățile vândute zilnic.
+cantitate_A <- c(5, 8, 4, 7, 6)
+
+# PRODUSUL B
+# Prețurile zilnice.
+pret_B <- c(15.00, 16.50, 14.75, 17.00, 15.80)
+
+# Cantitățile vândute zilnic.
+cantitate_B <- c(10, 9, 12, 8, 11)
+
+
+# Verificăm dacă datele sunt corect aliniate:
+# fiecare preț trebuie să corespundă cantității din aceeași zi.
+stopifnot(
+  length(zile) == length(pret_A),
+  length(pret_A) == length(cantitate_A),
+  length(pret_B) == length(cantitate_B)
+)
+
+
+# 2. CALCULAREA VENITULUI ZILNIC
+
+# Venitul zilnic = preț × cantitate.
+venit_A <- pret_A * cantitate_A
+venit_B <- pret_B * cantitate_B
+
+cat("VENIT ZILNIC - PRODUSUL A\n")
+print(venit_A)
+
+cat("\nVENIT ZILNIC - PRODUSUL B\n")
+print(venit_B)
+
+
+# 3. ZIUA CU VENITUL MAXIM
+
+# which.max() identifică poziția valorii maxime.
+zi_max_A <- which.max(venit_A)
+zi_max_B <- which.max(venit_B)
+
+venit_max_A <- max(venit_A)
+venit_max_B <- max(venit_B)
+
+cat("\nZiua cu venitul maxim pentru Produsul A:",
+    zi_max_A, "\n")
+cat("Venitul maxim pentru Produsul A:",
+    venit_max_A, "lei\n")
+
+cat("\nZiua cu venitul maxim pentru Produsul B:",
+    zi_max_B, "\n")
+cat("Venitul maxim pentru Produsul B:",
+    venit_max_B, "lei\n")
+
+
+# 4. VÂNZAREA MEDIE ZILNICĂ
+
+# Calculăm numărul mediu de unități vândute pe zi.
+cantitate_medie_A <- mean(cantitate_A)
+cantitate_medie_B <- mean(cantitate_B)
+
+cat("\nCantitatea medie vândută zilnic - A:",
+    cantitate_medie_A, "unități\n")
+cat("Cantitatea medie vândută zilnic - B:",
+    cantitate_medie_B, "unități\n")
+
+
+# 5. VENITUL TOTAL
+
+# Venitul total este suma veniturilor zilnice.
+venit_total_A <- sum(venit_A)
+venit_total_B <- sum(venit_B)
+
+cat("\nVenit total - Produsul A:",
+    venit_total_A, "lei\n")
+cat("Venit total - Produsul B:",
+    venit_total_B, "lei\n")
+
+
+# 6. CREAREA LISTELOR PENTRU PRODUSE
+
+# Fiecare produs este reprezentat printr-o listă
+# care conține numele, prețurile și cantitățile.
+produs_A <- list(
+  nume = "Produsul A",
+  pret = pret_A,
+  cantitate = cantitate_A
+)
+
+produs_B <- list(
+  nume = "Produsul B",
+  pret = pret_B,
+  cantitate = cantitate_B
+)
+
+# Lista principală conține cele două produse.
+shop_data <- list(
+  produs_A = produs_A,
+  produs_B = produs_B
+)
+
+# Adăugăm veniturile totale în shop_data.
+shop_data$venituri_totale <- list(
+  produs_A = venit_total_A,
+  produs_B = venit_total_B
+)
+
+cat("\nSTRUCTURA shop_data\n")
+print(shop_data)
+
+
+# 7. CREAREA DATA.FRAME-URILOR
+
+# Data frame pentru Produsul A.
+df_A <- data.frame(
+  produs = "A",
+  zi = zile,
+  pret = pret_A,
+  cantitate = cantitate_A,
+  venit = venit_A
+)
+
+# Data frame pentru Produsul B.
+df_B <- data.frame(
+  produs = "B",
+  zi = zile,
+  pret = pret_B,
+  cantitate = cantitate_B,
+  venit = venit_B
+)
+
+cat("\nDATA FRAME - PRODUSUL A\n")
+print(df_A)
+
+cat("\nDATA FRAME - PRODUSUL B\n")
+print(df_B)
+
+
+# 8. COMBINAREA DATA.FRAME-URILOR
+
+# Combinam cele doua tabele folosind rbind(),
+# conform cerintei.
+df_sales <- rbind(df_A, df_B)
+
+cat("\nTABELUL FINAL df_sales\n")
+print(df_sales)
+
+
+# 9. ANALIZA FOLOSIND aggregate()
+
+# Venitul total per produs.
+venit_total_per_produs <- aggregate(
+  venit ~ produs,
+  data = df_sales,
+  FUN = sum
+)
+
+cat("\nVENIT TOTAL PER PRODUS\n")
+print(venit_total_per_produs)
+
+
+# Prețul mediu per produs.
+pret_mediu_per_produs <- aggregate(
+  pret ~ produs,
+  data = df_sales,
+  FUN = mean
+)
+
+cat("\nPREȚ MEDIU PER PRODUS\n")
+print(pret_mediu_per_produs)
+
+
+# Cantitatea totală vândută per produs.
+cantitate_totala_per_produs <- aggregate(
+  cantitate ~ produs,
+  data = df_sales,
+  FUN = sum
+)
+
+cat("\nCANTITATE TOTALĂ VÂNDUTĂ PER PRODUS\n")
+print(cantitate_totala_per_produs)
+
+
+# 10. COMPARAREA CELOR DOUĂ PRODUSE
+
+# Identificăm produsul cu venitul total mai mare.
+if (venit_total_A > venit_total_B) {
+  produs_venit_maxim <- "Produsul A"
+} else if (venit_total_B > venit_total_A) {
+  produs_venit_maxim <- "Produsul B"
+} else {
+  produs_venit_maxim <- "Ambele produse"
+}
+
+# Identificăm produsul cu prețul mediu mai mare.
+pret_mediu_A <- mean(pret_A)
+pret_mediu_B <- mean(pret_B)
+
+if (pret_mediu_A > pret_mediu_B) {
+  produs_pret_mediu_maxim <- "Produsul A"
+} else if (pret_mediu_B > pret_mediu_A) {
+  produs_pret_mediu_maxim <- "Produsul B"
+} else {
+  produs_pret_mediu_maxim <- "Ambele produse"
+}
+
+# Identificăm produsul cu cantitatea totală vândută mai mare.
+cantitate_totala_A <- sum(cantitate_A)
+cantitate_totala_B <- sum(cantitate_B)
+
+if (cantitate_totala_A > cantitate_totala_B) {
+  produs_cantitate_maxima <- "Produsul A"
+} else if (cantitate_totala_B > cantitate_totala_A) {
+  produs_cantitate_maxima <- "Produsul B"
+} else {
+  produs_cantitate_maxima <- "Ambele produse"
+}
+
+cat("\nCOMPARAȚIE\n")
+cat("Produs cu venitul total mai mare:",
+    produs_venit_maxim, "\n")
+cat("Produs cu prețul mediu mai mare:",
+    produs_pret_mediu_maxim, "\n")
+cat("Produs cu cantitatea totală vândută mai mare:",
+    produs_cantitate_maxima, "\n")
+
+
+# 11. REZUMATUL ANALIZEI
+
+cat("\n================ REZUMAT ================\n")
+
+cat("\nProdusul A:\n")
+cat("  Venit total:", round(venit_total_A, 2), "lei\n")
+cat("  Preț mediu:", round(pret_mediu_A, 2), "lei\n")
+cat("  Cantitate totală:", cantitate_totala_A, "unități\n")
+cat("  Cantitate medie/zi:", round(cantitate_medie_A, 2),
+    "unități\n")
+cat("  Venit maxim într-o zi:", round(venit_max_A, 2), "lei\n")
+cat("  Ziua cu venitul maxim:", zi_max_A, "\n")
+
+cat("\nProdusul B:\n")
+cat("  Venit total:", round(venit_total_B, 2), "lei\n")
+cat("  Preț mediu:", round(pret_mediu_B, 2), "lei\n")
+cat("  Cantitate totală:", cantitate_totala_B, "unități\n")
+cat("  Cantitate medie/zi:", round(cantitate_medie_B, 2),
+    "unități\n")
+cat("  Venit maxim într-o zi:", round(venit_max_B, 2), "lei\n")
+cat("  Ziua cu venitul maxim:", zi_max_B, "\n")
+
+
+
+# 12. CONCLUZIA FINALĂ ȘI REFLECȚIA
+
+# Produsul B generează venitul total mai mare în cele 5 zile.
+#
+# Produsul A are un preț mediu mai mare (21.11 lei), în timp ce
+# Produsul B are un preț mediu mai mic (15.81 lei).
+#
+# Cu toate acestea, Produsul B a vândut 50 de unități,
+# față de 30 de unități pentru Produsul A. Astfel, volumul
+# mai mare al vânzărilor conduce la un venit total mai mare:
+# 819.65 lei pentru B, față de 593.10 lei pentru A.
+#
+# Pentru perioada analizată, Produsul B este mai performant
+# dacă folosim venitul total ca indicator principal.
+#
+# Rezultatul poate fi considerat interesant deoarece produsul
+# cu prețul mediu mai mic generează venitul total mai mare.
+# Acest lucru evidențiază importanța volumului vânzărilor.
+#
+# Pentru marketing, datele arată că Produsul B are un volum
+# de vânzări și un venit total mai mari în aceste 5 zile.
+# Totuși, concluzia este limitată la perioada analizată și la
+# indicatorii disponibili. Venitul nu este același lucru cu
+# profitul.
+#
+# Următorul pas logic ar fi extinderea analizei pe o perioadă
+# mai lungă și adăugarea unor indicatori precum costul
+# produsului, profitul, cheltuielile de marketing și rata
+# de conversie. Astfel, performanța ar putea fi evaluată
+# mai complet din perspectiva business.

@@ -1,0 +1,136 @@
+# 1. Pachete ---------------------------------------------------
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+# 2. Încărcarea datelor -----------------------------------------
+date <- read_csv("RDSDA4_Task_06-library_books_read.csv", show_col_types = FALSE)
+
+# Verificarea structurii și a valorilor lipsă
+glimpse(date)
+print(summary(date))
+print(colSums(is.na(date)))
+
+# 3. Explorarea relațiilor -------------------------------------
+# Relația dintre vârstă și numărul de cărți
+p_age <- ggplot(date, aes(x = member_age, y = books_read)) +
+  geom_point(size = 2.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Books read in relation to member age",
+    x = "Member age (years)",
+    y = "Books read"
+  ) +
+  theme_minimal()
+
+# Relația dintre vechimea ca membru și numărul de cărți
+p_membership <- ggplot(date, aes(x = membership_years, y = books_read)) +
+  geom_point(size = 2.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Books read in relation to membership duration",
+    x = "Membership years",
+    y = "Books read"
+  ) +
+  theme_minimal()
+
+# 4. Alegerea metodei ------------------------------------------
+# Întrebarea cere estimarea unui NUMĂR de cărți, deci folosim
+# regresie liniară, nu clasificare.
+model <- lm(books_read ~ member_age + membership_years, data = date)
+
+# 5. Interpretarea modelului -----------------------------------
+summary(model)
+
+# Coeficienții standardizați permit compararea impactului
+# predictorilor, deoarece variabilele au unități diferite.
+date_std <- date %>%
+  mutate(
+    member_age_z = as.numeric(scale(member_age)),
+    membership_years_z = as.numeric(scale(membership_years)),
+    books_read_z = as.numeric(scale(books_read))
+  )
+
+model_std <- lm(
+  books_read_z ~ member_age_z + membership_years_z,
+  data = date_std
+)
+
+summary(model_std)
+
+# 6. Evaluarea pe date de test ---------------------------------
+# Folosim un set de test de 20%, cu seed pentru reproducibilitate.
+set.seed(42)
+n <- nrow(date)
+test_id <- sample(seq_len(n), size = round(0.20 * n))
+train_data <- date[-test_id, ]
+test_data <- date[test_id, ]
+
+model_train <- lm(
+  books_read ~ member_age + membership_years,
+  data = train_data
+)
+
+test_data <- test_data %>%
+  mutate(
+    predicted = predict(model_train, newdata = test_data),
+    error = books_read - predicted
+  )
+
+test_r2 <- cor(test_data$books_read, test_data$predicted)^2
+test_rmse <- sqrt(mean(test_data$error^2))
+test_mae <- mean(abs(test_data$error))
+
+cat("\n--- Test set ---\n")
+cat("R-squared test:", round(test_r2, 3), "\n")
+cat("RMSE test:", round(test_rmse, 3), "\n")
+cat("MAE test:", round(test_mae, 3), "\n")
+
+# 7. Predicții pentru membri noi -------------------------------
+noi_membri <- data.frame(
+  member_age = c(18, 25, 40, 60),
+  membership_years = c(1, 3, 5, 7)
+)
+
+predictii <- predict(model, newdata = noi_membri)
+
+rezultate <- cbind(
+  noi_membri,
+  books_predicted = round(predictii)
+)
+
+print(rezultate)
+write_csv(rezultate, "predictions.csv")
+
+# 8. Vizualizarea modelului ------------------------------------
+viz <- ggplot(date, aes(x = member_age, y = books_read)) +
+  geom_point(aes(size = membership_years), alpha = 0.75) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Who reads more books?",
+    subtitle = "Multiple linear regression: age + membership duration",
+    x = "Member age (years)",
+    y = "Books read",
+    size = "Membership years"
+  ) +
+  theme_minimal()
+
+ggsave("vizualizare.png", viz, width = 9, height = 6, dpi = 300)
+
+# 9. Diagnostic simplu al reziduurilor -------------------------
+par(mfrow = c(2, 2))
+plot(model)
+par(mfrow = c(1, 1))
+
+# 10. Concluzie ------------------------------------------------
+# Pe cele 80 de observații, regresia explică aproximativ
+# 0.853 din variația numărului de cărți citite.
+# În coeficienți standardizați, vârsta are un coeficient de
+# aproximativ 0.673, iar vechimea
+# de membru aproximativ 0.608.
+# Prin urmare, în acest set de date, vârsta are o asociere
+# standardizată ușor mai mare cu books_read.
+# Pe setul de test, performanța este mai modestă:
+# R2 = 0.607, RMSE = 5.68, MAE = 4.48.
+# Modelul este util pentru estimare, dar nu trebuie interpretat
+# ca dovadă de cauzalitate.
